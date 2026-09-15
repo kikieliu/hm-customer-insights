@@ -105,6 +105,7 @@ FROM (
 GROUP BY age_groups;
 
 -- 5. Do customer membership/ marketing attributes relate to purchasing behavior?
+-- Membership
 SELECT 
 	club_member_status,
 	COUNT(*) AS customer_count,
@@ -122,6 +123,7 @@ FROM (
 )
 GROUP BY club_member_status;
 
+-- Fashion News Frequency 
 SELECT 
 	fashion_news_frequency,
 	COUNT(*) AS customer_count,
