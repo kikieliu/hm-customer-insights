@@ -1,3 +1,4 @@
+-- Data Preparation
 -- Check latest transaction date
 SELECT MAX(t_dat)
 FROM transactions_train;
