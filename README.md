@@ -140,7 +140,7 @@ hm-customer-insights/
 │   └── data_dictionary.txt
 │
 ├── excel/
-│   └── hm_customer_omnichannel_analytics.xlsx
+│   └── hm_customer_analysis.xlsx
 │
 ├── images/
 │   ├── excel_executive_summary.png
@@ -383,7 +383,7 @@ The Excel workbook adds a business-reporting layer using formulas, PivotTables, 
 
 Workbook:
 
-[`excel/hm_customer_omnichannel_analytics.xlsx`](excel/hm_customer_omnichannel_analytics.xlsx)
+[`excel/hm_customer_omnichannel_analytics.xlsx`](excel/hm_customer_analysis.xlsx)
 
 The workbook contains:
 
