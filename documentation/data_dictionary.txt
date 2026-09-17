@@ -4,161 +4,93 @@ DATASET / COLUMN DOCUMENTATION
 PROJECT SCOPE
 -------------
 Source: H&M Personalized Fashion Recommendations dataset
-Primary analysis period: 2019-09-23 through 2020-09-22
+Original dataset: https://www.kaggle.com/competitions/h-and-m-personalized-fashion-recommendations/data
+
+Primary analysis period used in this project:
+2019-09-23 through 2020-09-22
 
 Important notes:
 - A row in the transaction data represents one purchased article line item, NOT an order.
 - The dataset does not contain an order_id.
 - The price field is a normalized/transformed value and should not be described as literal currency.
 - sales_channel_id is kept as Channel 1 / Channel 2 because the dataset does not officially define the channel labels.
+- This file documents only columns that exist in the ORIGINAL H&M dataset.
+- Calculated columns and Power BI-only fields are documented in the README instead.
 
 
-1. transactions_12mo
--------------------
+1. transactions_train.csv
+-------------------------
 Purpose:
-Main fact table used for the Power BI model and 12-month analysis.
+Original H&M transaction-level dataset containing customer purchases.
 
-Rows:
-14,898,423
-
-Columns used in the project:
+Columns used in this project:
 
 t_dat
 - Transaction date.
-- Used for monthly trends, purchase-day counts, recency, and the Date-table relationship.
+- Used to define the 12-month analysis period and support monthly trend, purchase-frequency, and recency analysis.
 
 customer_id
 - Unique customer identifier.
-- Joins to customers_clean[customer_id].
-- Used for distinct purchasing-customer counts and customer-level analysis.
+- Used to connect transaction activity to customer attributes.
+- Used for distinct purchasing-customer counts, retention analysis, and customer segmentation.
 
 article_id
 - Unique article/product identifier.
-- Joins to articles_clean[article_id].
-- Used for product-level analysis and distinct purchased article counts.
+- Used to connect transactions to article attributes.
+- Used for product-level analysis and distinct purchased-article counts.
 
 price
-- Normalized transaction value.
-- Used for customer-value calculations and value quartiles.
-- Not treated as literal currency.
+- Normalized/transformed transaction value.
+- Used for customer-value calculations and value-segment analysis.
+- Not interpreted as literal currency.
 
 sales_channel_id
-- Numeric channel identifier.
-- Values used in the project: 1 and 2.
-- Used to classify customers as Channel 1 Only, Channel 2 Only, or Omnichannel.
+- Numeric sales-channel identifier.
+- Values in the dataset are 1 and 2.
+- Used to analyze Channel 1, Channel 2, and omnichannel purchasing behavior.
 
 
-2. customers_clean
-------------------
+2. customers.csv
+----------------
 Purpose:
-Customer dimension used for customer attributes and customer-level calculated fields.
+Original H&M customer dataset containing customer attributes.
 
-Source columns used:
+Columns used in this project:
 
 customer_id
 - Unique customer identifier.
-- Primary relationship key to transactions_12mo.
+- Used to connect customer attributes to transaction activity.
 
 age
 - Customer age.
-- Used to create Age Groups.
+- Used for age-group analysis.
 
 club_member_status
 - H&M club membership status.
-- Examples used in the dashboard include ACTIVE, PRE-CREATE, and LEFT CLUB.
+- Examples include ACTIVE, PRE-CREATE, and LEFT CLUB.
+- Used to compare customer behavior across membership statuses.
 
 fashion_news_frequency
 - Customer fashion-news preference/frequency.
 - Examples include NONE, Monthly, and Regularly.
-
-Calculated / derived columns:
-
-Age Groups
-- Customer age-band classification:
-  16-25
-  26-35
-  36-45
-  46-55
-  56-65
-  66+
-  Unknown
-
-Channel Count
-- Distinct number of sales channels used by each customer during the analysis period.
-- Typical values: 1 or 2.
-- Blank for customers with no purchases in the analysis period.
-
-Channel Segment
-- Customer channel classification:
-  Channel 1 Only
-  Channel 2 Only
-  Omnichannel
-- Blank for customers with no purchases in the analysis period.
-
-Purchase Day Count
-- Distinct number of transaction dates for each customer.
-
-Purchase Frequency Group
-- Groups customers by Purchase Day Count:
-  1 Day
-  2-3 Days
-  4-6 Days
-  7+ Days
-
-Purchase Frequency Sort
-- Numeric sort key used to keep Purchase Frequency Group in logical order.
-
-Last Purchase Date
-- Most recent transaction date for each customer within the 12-month analysis period.
-
-Recency Days
-- Number of days between Last Purchase Date and 2020-09-22.
-
-Recency Group
-- Recency buckets:
-  0-30 Days
-  31-60 Days
-  61-90 Days
-  91-180 Days
-  181+ Days
-
-Recency Sort
-- Numeric sort key used to keep Recency Group in logical order.
-
-Fashion News Status
-- Simplified subscription grouping:
-  Not Subscribed = NONE
-  Subscribed = Monthly or Regularly
-
-Total Customer Value
-- Sum of transactions_12mo[price] for each customer over the full analysis period.
-
-Customer Value Rank
-- Customer rank based on Total Customer Value.
-- Used to assign value quartiles.
-
-Value Quartile
-- Customer-value segment:
-  Q1 = lowest-value customers
-  Q2
-  Q3
-  Q4 = highest-value customers
+- Used to compare customer behavior by fashion-news subscription preference.
 
 
-3. articles_clean
------------------
+3. articles.csv
+---------------
 Purpose:
-Product/article dimension used for product classification.
+Original H&M article/product dataset containing product attributes.
 
-Columns used:
+Columns used in this project:
 
 article_id
 - Unique article identifier.
-- Primary relationship key to transactions_12mo.
+- Used to connect article attributes to transaction activity.
 
 product_group_name
-- High-level product grouping used throughout the analysis.
-- Examples:
+- High-level product grouping.
+- Used for product-volume, customer-reach, and product-mix analysis.
+- Examples include:
   Garment Upper body
   Garment Lower body
   Garment Full body
@@ -179,40 +111,17 @@ product_group_name
   Fun
   Unknown
 
-4. article_transaction_view
----------------------------
-Purpose:
-SQL analysis view combining transaction data with article/product information.
 
-Used for:
-- Purchase volume by product group
-- Distinct customer reach by product group
-- Product mix analysis
+ANALYSIS-SPECIFIC TABLES
+------------------------
+The project also creates cleaned, filtered, and modeled tables such as:
 
-Validated scope:
-- Minimum date: 2019-09-23
-- Maximum date: 2020-09-22
-- Rows: 14,898,423
-- Distinct purchasing customers: 994,320
+- transactions_12mo
+- customers_clean
+- articles_clean
+- article_transaction_view
+- Power BI Date table
 
+These are NOT original H&M dataset tables.
 
-KEY VALIDATED COUNTS
---------------------
-Purchasing Customers:
-994,320
-
-Distinct Purchased Articles:
-70,906
-
-Channel Segment Counts:
-- Channel 1 Only: 187,602
-- Channel 2 Only: 483,344
-- Omnichannel: 323,374
-
-Top Product Group Customer Reach:
-- Garment Upper body: 774,997
-- Garment Lower body: 638,249
-- Garment Full body: 422,889
-- Underwear: 354,666
-- Accessories: 308,378
-- Swimwear: 243,695
+Their creation, calculated fields, segmentation logic, and Power BI modeling details are documented in the project README and SQL scripts rather than in this source-column dictionary.
