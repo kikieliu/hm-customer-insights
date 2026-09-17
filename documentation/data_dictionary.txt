@@ -1,0 +1,218 @@
+H&M CUSTOMER & OMNICHANNEL ANALYTICS
+DATASET / COLUMN DOCUMENTATION
+
+PROJECT SCOPE
+-------------
+Source: H&M Personalized Fashion Recommendations dataset
+Primary analysis period: 2019-09-23 through 2020-09-22
+
+Important notes:
+- A row in the transaction data represents one purchased article line item, NOT an order.
+- The dataset does not contain an order_id.
+- The price field is a normalized/transformed value and should not be described as literal currency.
+- sales_channel_id is kept as Channel 1 / Channel 2 because the dataset does not officially define the channel labels.
+
+
+1. transactions_12mo
+-------------------
+Purpose:
+Main fact table used for the Power BI model and 12-month analysis.
+
+Rows:
+14,898,423
+
+Columns used in the project:
+
+t_dat
+- Transaction date.
+- Used for monthly trends, purchase-day counts, recency, and the Date-table relationship.
+
+customer_id
+- Unique customer identifier.
+- Joins to customers_clean[customer_id].
+- Used for distinct purchasing-customer counts and customer-level analysis.
+
+article_id
+- Unique article/product identifier.
+- Joins to articles_clean[article_id].
+- Used for product-level analysis and distinct purchased article counts.
+
+price
+- Normalized transaction value.
+- Used for customer-value calculations and value quartiles.
+- Not treated as literal currency.
+
+sales_channel_id
+- Numeric channel identifier.
+- Values used in the project: 1 and 2.
+- Used to classify customers as Channel 1 Only, Channel 2 Only, or Omnichannel.
+
+
+2. customers_clean
+------------------
+Purpose:
+Customer dimension used for customer attributes and customer-level calculated fields.
+
+Source columns used:
+
+customer_id
+- Unique customer identifier.
+- Primary relationship key to transactions_12mo.
+
+age
+- Customer age.
+- Used to create Age Groups.
+
+club_member_status
+- H&M club membership status.
+- Examples used in the dashboard include ACTIVE, PRE-CREATE, and LEFT CLUB.
+
+fashion_news_frequency
+- Customer fashion-news preference/frequency.
+- Examples include NONE, Monthly, and Regularly.
+
+Calculated / derived columns:
+
+Age Groups
+- Customer age-band classification:
+  16-25
+  26-35
+  36-45
+  46-55
+  56-65
+  66+
+  Unknown
+
+Channel Count
+- Distinct number of sales channels used by each customer during the analysis period.
+- Typical values: 1 or 2.
+- Blank for customers with no purchases in the analysis period.
+
+Channel Segment
+- Customer channel classification:
+  Channel 1 Only
+  Channel 2 Only
+  Omnichannel
+- Blank for customers with no purchases in the analysis period.
+
+Purchase Day Count
+- Distinct number of transaction dates for each customer.
+
+Purchase Frequency Group
+- Groups customers by Purchase Day Count:
+  1 Day
+  2-3 Days
+  4-6 Days
+  7+ Days
+
+Purchase Frequency Sort
+- Numeric sort key used to keep Purchase Frequency Group in logical order.
+
+Last Purchase Date
+- Most recent transaction date for each customer within the 12-month analysis period.
+
+Recency Days
+- Number of days between Last Purchase Date and 2020-09-22.
+
+Recency Group
+- Recency buckets:
+  0-30 Days
+  31-60 Days
+  61-90 Days
+  91-180 Days
+  181+ Days
+
+Recency Sort
+- Numeric sort key used to keep Recency Group in logical order.
+
+Fashion News Status
+- Simplified subscription grouping:
+  Not Subscribed = NONE
+  Subscribed = Monthly or Regularly
+
+Total Customer Value
+- Sum of transactions_12mo[price] for each customer over the full analysis period.
+
+Customer Value Rank
+- Customer rank based on Total Customer Value.
+- Used to assign value quartiles.
+
+Value Quartile
+- Customer-value segment:
+  Q1 = lowest-value customers
+  Q2
+  Q3
+  Q4 = highest-value customers
+
+
+3. articles_clean
+-----------------
+Purpose:
+Product/article dimension used for product classification.
+
+Columns used:
+
+article_id
+- Unique article identifier.
+- Primary relationship key to transactions_12mo.
+
+product_group_name
+- High-level product grouping used throughout the analysis.
+- Examples:
+  Garment Upper body
+  Garment Lower body
+  Garment Full body
+  Underwear
+  Accessories
+  Swimwear
+  Socks & Tights
+  Shoes
+  Nightwear
+  Bags
+  Items
+  Furniture
+  Cosmetic
+  Garment and Shoe care
+  Underwear/nightwear
+  Stationery
+  Interior textile
+  Fun
+  Unknown
+
+4. article_transaction_view
+---------------------------
+Purpose:
+SQL analysis view combining transaction data with article/product information.
+
+Used for:
+- Purchase volume by product group
+- Distinct customer reach by product group
+- Product mix analysis
+
+Validated scope:
+- Minimum date: 2019-09-23
+- Maximum date: 2020-09-22
+- Rows: 14,898,423
+- Distinct purchasing customers: 994,320
+
+
+KEY VALIDATED COUNTS
+--------------------
+Purchasing Customers:
+994,320
+
+Distinct Purchased Articles:
+70,906
+
+Channel Segment Counts:
+- Channel 1 Only: 187,602
+- Channel 2 Only: 483,344
+- Omnichannel: 323,374
+
+Top Product Group Customer Reach:
+- Garment Upper body: 774,997
+- Garment Lower body: 638,249
+- Garment Full body: 422,889
+- Underwear: 354,666
+- Accessories: 308,378
+- Swimwear: 243,695
