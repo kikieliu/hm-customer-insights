@@ -383,7 +383,7 @@ The Excel workbook adds a business-reporting layer using formulas, PivotTables, 
 
 Workbook:
 
-[`excel/hm_customer_omnichannel_analytics.xlsx`](excel/hm_customer_analysis.xlsx)
+[`excel/hm_customer_analysis.xlsx`](excel/hm_customer_analysis.xlsx)
 
 The workbook contains:
 
